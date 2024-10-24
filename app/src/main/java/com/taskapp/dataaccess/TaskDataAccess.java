@@ -51,9 +51,10 @@ public class TaskDataAccess {
                 int code = Integer.parseInt(values[0]);
                 String name = values[1];
                 int status = Integer.parseInt(values[2]);
-                User repUser = User.parseUser(values[3]);
+                int repUser = Integer.parseInt(values[3]);
+                User repUser2 = userDataAccess.findByCode(repUser);
 
-                Task task = new Task(code, name, status, repUser);
+                Task task = new Task(code, name, status, repUser2);
                 tasks.add(task);
             }
         } catch (IOException e) {
@@ -81,53 +82,54 @@ public class TaskDataAccess {
      * @param code 取得するタスクのコード
      * @return 取得したタスク
      */
-    // public Task findByCode(int code) {
-    //         Task task = null;
-    //     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-    //         String line;
-    //         reader.readLine();
-    //         while((line = reader.readLine()) != null) {
-    //             String[] values =line.split(",");
+    public Task findByCode(int code) {
+            Task task = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            reader.readLine();
+            while((line = reader.readLine()) != null) {
+                String[] values =line.split(",");
 
-    //             int code1 = Integer.parseInt(values[0]);
-    //             if (code != code1) continue;
+                int code1 = Integer.parseInt(values[0]);
+                if (code != code1) continue;
                 
-    //             String name = values[1];
-    //             int status = Integer.parseInt(values[2]);
-    //             User repUser = User.parse(values[3]);
+                String name = values[1];
+                int status = Integer.parseInt(values[2]);
+                int repUser = Integer.parseInt(values[3]);
+                User repUser2 = userDataAccess.findByCode(repUser);
                 
-    //             task = new Task(code1, name, status, repUser)
-    //             break;
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return task;
-    // }
+                task = new Task(code1, name, status, repUser2);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return task;
+    }
 
     /**
      * タスクデータを更新します。
      * @param updateTask 更新するタスク
      */
-    // public void update(Task updateTask) {
-    //     List<Task> tasks = findAll();
-    //     try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath,true))) {
-    //         bw.write("Code,Name,Status,Rep_User_Code");
+    public void update(Task updateTask) {
+        List<Task> tasks = findAll();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            bw.write("Code,Name,Status,Rep_User_Code");
 
-    //         String line;
-    //         for (Task task : tasks) {
-    //             if(task.getCode() == updateTask.getCode()) {
-    //                 line = createLine(updateTask);
-    //             } else {
-    //                 line =createLine(task);
-    //             }
-    //             bw.write(line);
-    //             bw.newLine();
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+            String line;
+            for (Task task : tasks) {
+                if(task.getCode() == updateTask.getCode()) {
+                    line = createLine(updateTask);
+                } else {
+                    line =createLine(task);
+                }
+                bw.write(line);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * コードを基にタスクデータを削除します。
@@ -156,6 +158,6 @@ public class TaskDataAccess {
      * @return CSVに書き込むためのフォーマット文字列
      */
     private String createLine(Task task) {
-        return task.getCode() + "," + task.getName() + "," +task.getStatus() + task.getRepUser();
+        return task.getCode() + "," + task.getName() + "," +task.getStatus() + "," + task.getRepUser().getCode();
     }
 }

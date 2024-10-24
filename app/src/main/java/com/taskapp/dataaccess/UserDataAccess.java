@@ -55,12 +55,28 @@ public class UserDataAccess {
      * @param code 取得するユーザーのコード
      * @return 見つかったユーザー
      */
-    // public User findByCode(int code) {
-    //     try () {
+    public User findByCode(int code) {
+        User user = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                    if (values.length != 4) continue;
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return null;
-    // }
+                    int code1 = Integer.parseInt(values[0]);
+                    if (code != code1) continue;
+
+                    String name = values[1];
+                    String email = values[2];
+                    String password = values[3];
+
+                    user = new User(code1, name, email, password);
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }
