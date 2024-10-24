@@ -113,18 +113,18 @@ public class TaskDataAccess {
      */
     public void update(Task updateTask) {
         List<Task> tasks = findAll();
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             bw.write("Code,Name,Status,Rep_User_Code");
-
             String line;
             for (Task task : tasks) {
                 if(task.getCode() == updateTask.getCode()) {
                     line = createLine(updateTask);
                 } else {
-                    line =createLine(task);
+                    line = createLine(task);
                 }
-                bw.write(line);
                 bw.newLine();
+                bw.write(line);
             }
         } catch (IOException e) {
             e.printStackTrace();

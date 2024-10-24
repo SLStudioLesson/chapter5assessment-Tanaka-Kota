@@ -109,12 +109,12 @@ public class TaskLogic {
             throw new AppException("存在するタスクコードを入力してください");
         }
 
-        if(task.getStatus() < status) {
+        if(task.getStatus() == status + 1) {
             throw new AppException("ステータスは、前のステータスより1つ先のもののみを選択してください");
         }
         
         Task task2 = new Task(code,task.getName(), status, loginUser);
-        taskDataAccess.update(task);
+        taskDataAccess.update(task2);
         System.out.println("");
 
         Log log = new Log(code, loginUser.getCode(), status, LocalDate.now());
