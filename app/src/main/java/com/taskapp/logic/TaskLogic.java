@@ -4,6 +4,11 @@ import com.taskapp.dataaccess.LogDataAccess;
 import com.taskapp.dataaccess.TaskDataAccess;
 import com.taskapp.dataaccess.UserDataAccess;
 
+import java.util.List;
+import com.taskapp.model.User;
+import com.taskapp.model.Task;
+import com.taskapp.exception.AppException;
+
 public class TaskLogic {
     private final TaskDataAccess taskDataAccess;
     private final LogDataAccess logDataAccess;
@@ -34,8 +39,28 @@ public class TaskLogic {
      * @see com.taskapp.dataaccess.TaskDataAccess#findAll()
      * @param loginUser ログインユーザー
      */
-    // public void showAll(User loginUser) {
-    // }
+    public void showAll(User loginUser) {
+        List<Task> tasks = taskDataAccess.findAll();
+
+        tasks.forEach (task -> {
+            String status = "未着手";
+            if (task.getStatus() == 1) {
+                status ="着手中";
+            } else if (task.getStatus() == 2) {
+                status = "完了";
+            }
+
+            String repUser = "";
+            if (task.getRepUser() == loginUser.getCode()) {
+                repUser = "あなたが担当しています";
+            } else if (task.getRepUser() == user.getCode()) {
+                repUser = user.getName() + "が担当しています";
+            }
+
+            System.out.println("タスク名: " + task.getName() + ", 担当者名: " + repUser + ", ステータス: " + status);
+        });
+
+    }
 
     /**
      * 新しいタスクを保存します。
@@ -49,10 +74,10 @@ public class TaskLogic {
      * @param loginUser ログインユーザー
      * @throws AppException ユーザーコードが存在しない場合にスローされます
      */
-    // public void save(int code, String name, int repUserCode,
-    //                 User loginUser) throws AppException {
-    // }
-
+    public void save(int code, String name, int repUserCode,User loginUser) throws AppException {
+        Task task = new Task(code, name, repUserCode, loginUser);
+        TaskDataAccess.save(task);
+        System.out.println(task.getName() + "の登録が完了しました");
     /**
      * タスクのステータスを変更します。
      *
@@ -64,8 +89,10 @@ public class TaskLogic {
      * @param loginUser ログインユーザー
      * @throws AppException タスクコードが存在しない、またはステータスが前のステータスより1つ先でない場合にスローされます
      */
-    // public void changeStatus(int code, int status,
-    //                         User loginUser) throws AppException {
+    // public void changeStatus(int code, int status,User loginUser) throws AppException {
+    //     Task task = new Task(code, null, status, loginUser);
+    //     TaskDataAccess.update(task);
+    //     System.out.println("");
     // }
 
     /**

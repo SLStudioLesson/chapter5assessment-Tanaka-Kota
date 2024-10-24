@@ -1,5 +1,11 @@
 package com.taskapp.dataaccess;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import com.taskapp.model.User;
+
 public class UserDataAccess {
     private final String filePath;
 
@@ -21,14 +27,28 @@ public class UserDataAccess {
      * @param password パスワード
      * @return 見つかったユーザー
      */
-    // public User findByEmailAndPassword(String email, String password) {
-    //     try () {
+    public User findByEmailAndPassword(String email, String password) {
+        User user = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine();
+            while((line = br.readLine()) != null) {
+                String[] values = line.split(",");
 
-    //     } catch (IOException e) {
-    //         e.printStackTrace();;
-    //     }
-    //     return null;
-    // }
+                if(!(values[2].equals(email) && values[3].equals(password))) continue;
+
+                int code = Integer.parseInt(values[0]);
+                String name = values[1];
+                String useremail = values[2];
+                String userpassword =values[3];
+
+                user = new User(code, name, useremail, userpassword);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();;
+        }
+        return user;
+    }
 
     /**
      * コードを基にユーザーデータを取得します。
